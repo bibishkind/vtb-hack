@@ -16,18 +16,23 @@ type Handler struct {
 func NewHandler(cfg *config.Config, service service2.Client) *Handler {
 	return &Handler{
 		service:        service,
-		requestTimeout: cfg.RequestTimeout,
+		requestTimeout: cfg.Handler.RequestTimeout,
 	}
 }
 
 func (h *Handler) Init() *echo.Echo {
 	router := echo.New()
 
-	api := router.Group("/api")
+	auth := router.Group("/auth")
 	{
-		api.POST("/auth/sign-up", h.SignUp)
-		api.POST("/auth/sign-in", h.SignIn)
+		auth.POST("/sign-up", h.SignUp)
+		auth.POST("/sign-in", h.SignIn)
 	}
+
+	//api := router.Group("/api", h.AuthMiddleware)
+	//{
+	//
+	//}
 
 	router.GET("/swagger/*", echoSwagger.WrapHandler)
 

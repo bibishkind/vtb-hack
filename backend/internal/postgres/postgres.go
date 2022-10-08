@@ -10,7 +10,6 @@ import (
 type Client interface {
 	Transactions
 	Users
-	RefreshTokens
 }
 
 type Transactions interface {
@@ -20,10 +19,6 @@ type Transactions interface {
 type Users interface {
 	CreateUser(ctx context.Context, tx pgx.Tx, user *domain.User) error
 	GetUserByUsername(ctx context.Context, tx pgx.Tx, username string) (*domain.User, error)
-}
-
-type RefreshTokens interface {
-	CreateRefreshToken(ctx context.Context, tx pgx.Tx, token string) error
 }
 
 type Postgres struct {

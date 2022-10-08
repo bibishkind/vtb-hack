@@ -1,8 +1,8 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "API for VTB HACK",
-        "title": "VTB HACK API",
+        "description": "API for VTB Hack",
+        "title": "VTB Hack API",
         "termsOfService": "http://swagger.io/terms/",
         "contact": {
             "name": "API Support",
@@ -138,9 +138,6 @@
             "type": "object",
             "properties": {
                 "accessToken": {
-                    "type": "string"
-                },
-                "refreshToken": {
                     "type": "string"
                 }
             }

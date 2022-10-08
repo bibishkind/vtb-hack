@@ -4,4 +4,8 @@ http:
   writeTimeout: 1s
   maxHeaderBytes: 1024
 
-requestTimeout: 2s
+handler:
+  requestTimeout: 2s
+
+tokenManager:
+  accessTTL: 240h

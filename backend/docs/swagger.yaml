@@ -18,8 +18,6 @@ definitions:
     properties:
       accessToken:
         type: string
-      refreshToken:
-        type: string
     type: object
   handler.SwaggerSignUpRequest:
     properties:
@@ -34,12 +32,12 @@ info:
     email: support@swagger.io
     name: API Support
     url: http://www.swagger.io/support
-  description: API for VTB HACK
+  description: API for VTB Hack
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
   termsOfService: http://swagger.io/terms/
-  title: VTB HACK API
+  title: VTB Hack API
   version: "1.0"
 paths:
   /auth/sign-in:

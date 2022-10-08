@@ -3,7 +3,6 @@ package auth
 import (
 	"errors"
 	"github.com/golang-jwt/jwt/v4"
-	"os"
 	"time"
 )
 
@@ -13,7 +12,7 @@ type AccessClaims struct {
 }
 
 func (m *TokenManager) GenerateAccessToken(id int) (string, error) {
-	signingKey := []byte(os.Getenv("SIGNING_KEY"))
+	signingKey := []byte(m.SigningKey)
 
 	claims := &jwt.RegisteredClaims{
 		ExpiresAt: jwt.NewNumericDate(time.Now().Add(m.AccessTTL)),
@@ -34,7 +33,7 @@ func (m *TokenManager) GenerateAccessToken(id int) (string, error) {
 
 func (m *TokenManager) ParseAccessToken(tokenString string) (int, error) {
 	token, err := jwt.ParseWithClaims(tokenString, &AccessClaims{}, func(token *jwt.Token) (interface{}, error) {
-		return []byte(os.Getenv("SIGNING_KEY")), nil
+		return []byte(m.SigningKey), nil
 	})
 	if err != nil {
 		return 0, err

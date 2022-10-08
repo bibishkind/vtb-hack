@@ -10,20 +10,29 @@ import (
 
 type (
 	Config struct {
-		Postgres       *PostgresConfig
-		HTTP           *HTTPConfig
-		RequestTimeout time.Duration
+		Postgres     *PostgresConfig
+		Server       *ServerConfig
+		Handler      *HandlerConfig
+		TokenManager *TokenManagerConfig
 	}
 
 	PostgresConfig struct {
 		URI string
 	}
 
-	HTTPConfig struct {
+	ServerConfig struct {
 		Port           string
 		ReadTimeout    time.Duration
 		WriteTimeout   time.Duration
 		MaxHeaderBytes int
+	}
+
+	HandlerConfig struct {
+		RequestTimeout time.Duration
+	}
+
+	TokenManagerConfig struct {
+		AccessTTL time.Duration
 	}
 )
 
@@ -45,13 +54,18 @@ func Init(configPath string) (*Config, error) {
 		Postgres: &PostgresConfig{
 			URI: os.Getenv("DB_URL"),
 		},
-		HTTP: &HTTPConfig{
+		Server: &ServerConfig{
 			Port:           viper.GetString("http.port"),
 			ReadTimeout:    viper.GetDuration("http.readTimeout"),
 			WriteTimeout:   viper.GetDuration("http.writeTimeout"),
 			MaxHeaderBytes: viper.GetInt("http.maxHeaderBytes"),
 		},
-		RequestTimeout: viper.GetDuration("requestTimeout"),
+		Handler: &HandlerConfig{
+			RequestTimeout: viper.GetDuration("handler.requestTimeout"),
+		},
+		TokenManager: &TokenManagerConfig{
+			AccessTTL: viper.GetDuration("tokenManager.accessTTL"),
+		},
 	}
 
 	return cfg, nil

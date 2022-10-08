@@ -146,9 +146,6 @@ const docTemplate = `{
             "properties": {
                 "accessToken": {
                     "type": "string"
-                },
-                "refreshToken": {
-                    "type": "string"
                 }
             }
         },
@@ -179,8 +176,8 @@ var SwaggerInfo = &swag.Spec{
 	Host:             "localhost:8080",
 	BasePath:         "/api",
 	Schemes:          []string{},
-	Title:            "VTB HACK API",
-	Description:      "API for VTB HACK",
+	Title:            "VTB Hack API",
+	Description:      "API for VTB Hack",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 }

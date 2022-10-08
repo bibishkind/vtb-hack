@@ -3,61 +3,51 @@ package service
 import (
 	"coffee-layered-architecture/internal/domain"
 	"context"
-	"log"
 )
 
 func (s *Service) SignUp(ctx context.Context, user *domain.User) error {
 	tx, err := s.postgres.AcquireTx(ctx)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback(ctx)
 
-	if err != nil || tx == nil {
-		log.Println(err)
+	publicKey, privateKey, err := s.vtb.NewWallet()
+	if err != nil {
 		return err
 	}
 
+	user.PublicKey = publicKey
+	user.PrivateKey = privateKey
+
 	if err = s.postgres.CreateUser(ctx, tx, user); err != nil {
-		log.Println(err)
-		tx.Rollback(ctx)
 		return err
 	}
 
 	tx.Commit(ctx)
 	return nil
 }
-func (s *Service) SignIn(ctx context.Context, user *domain.User) (string, string, error) {
+func (s *Service) SignIn(ctx context.Context, user *domain.User) (string, error) {
 	tx, err := s.postgres.AcquireTx(ctx)
-
-	if err != nil || tx == nil {
-		log.Println(err)
-		return "", "", err
+	if err != nil {
+		return "", err
 	}
+	defer tx.Rollback(ctx)
 
 	user, err = s.postgres.GetUserByUsername(ctx, tx, user.Username)
 	if err != nil {
-		tx.Rollback(ctx)
-		log.Println(err)
-		return "", "", err
+		return "", err
 	}
 
 	accessToken, err := s.tokenManager.GenerateAccessToken(user.Id)
 	if err != nil {
-		log.Println(err)
-		tx.Rollback(ctx)
-		return "", "", err
-	}
-
-	refreshToken, err := s.tokenManager.GenerateRefreshToken()
-	if err != nil {
-		log.Println(err)
-		tx.Rollback(ctx)
-		return "", "", err
-	}
-
-	if err = s.postgres.CreateRefreshToken(ctx, tx, refreshToken); err != nil {
-		log.Println(err)
-		tx.Rollback(ctx)
-		return "", "", err
+		return "", err
 	}
 
 	tx.Commit(ctx)
-	return accessToken, refreshToken, nil
+	return accessToken, nil
+}
+
+func (s *Service) IdentifyUser(ctx context.Context, accessToken string) (int, error) {
+	return s.tokenManager.ParseAccessToken(accessToken)
 }

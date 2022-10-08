@@ -16,5 +16,6 @@ type User struct {
 	LastName   string `json:"lastName"`
 	Email      string `json:"email"`
 	Role       int    `json:"role"`
-	Wallet     string `json:"wallet"`
+	PrivateKey string `json:"privateKey"`
+	PublicKey  string `json:"publicKey"`
 }

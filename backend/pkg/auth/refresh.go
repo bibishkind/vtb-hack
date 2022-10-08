@@ -4,7 +4,6 @@ import (
 	"errors"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/google/uuid"
-	"os"
 	"time"
 )
 
@@ -14,7 +13,7 @@ type RefreshClaims struct {
 }
 
 func (m *TokenManager) GenerateRefreshToken() (string, error) {
-	signingKey := []byte(os.Getenv("SIGNING_KEY"))
+	signingKey := []byte(m.SigningKey)
 
 	claims := &jwt.RegisteredClaims{
 		ExpiresAt: jwt.NewNumericDate(time.Now().Add(m.RefreshTTL)),
@@ -35,7 +34,7 @@ func (m *TokenManager) GenerateRefreshToken() (string, error) {
 
 func (m *TokenManager) ParseRefreshToken(tokenString string) (string, error) {
 	token, err := jwt.ParseWithClaims(tokenString, &RefreshClaims{}, func(token *jwt.Token) (interface{}, error) {
-		return []byte(os.Getenv("SIGNING_KEY")), nil
+		return []byte(m.SigningKey), nil
 	})
 	if err != nil {
 		return "", err

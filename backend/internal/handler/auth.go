@@ -18,8 +18,7 @@ type SwaggerSignInRequest struct {
 }
 
 type SwaggerSignInResponse struct {
-	AccessToken  string `json:"accessToken"`
-	RefreshToken string `json:"refreshToken"`
+	AccessToken string `json:"accessToken"`
 }
 
 // @Summary Authorization of a user
@@ -38,18 +37,18 @@ func (h *Handler) SignUp(c echo.Context) error {
 
 	user := new(domain.User)
 	if err := c.Bind(user); err != nil {
-		return h.makeResponse(c, http.StatusBadRequest, err.Error())
+		return makeResponse(c, http.StatusBadRequest, err.Error())
 	}
 
 	if user.Username == "" || user.Password == "" {
-		return h.makeResponse(c, http.StatusBadRequest, "username and password are required")
+		return makeResponse(c, http.StatusBadRequest, "username and password are required")
 	}
 
 	if err := h.service.SignUp(ctx, user); err != nil {
-		return h.makeResponse(c, http.StatusInternalServerError, "can't sign up the user")
+		return makeResponse(c, http.StatusInternalServerError, "can't sign up the user")
 	}
 
-	return h.makeResponse(c, http.StatusCreated, "ok")
+	return makeResponse(c, http.StatusCreated, "ok")
 }
 
 // @Summary Authentication of a user
@@ -68,19 +67,21 @@ func (h *Handler) SignIn(c echo.Context) error {
 
 	user := new(domain.User)
 	if err := c.Bind(&user); err != nil {
-		return h.makeResponse(c, http.StatusBadRequest, "can't bind the user")
+		return makeResponse(c, http.StatusBadRequest, "can't bind the user")
 	}
 
-	accessToken, refreshToken, err := h.service.SignIn(ctx, user)
+	if user.Username == "" || user.Password == "" {
+		return makeResponse(c, http.StatusBadRequest, "username and password are required")
+	}
+
+	accessToken, err := h.service.SignIn(ctx, user)
 	if err != nil {
-		return h.makeResponse(c, http.StatusInternalServerError, "can't sign in the user")
+		return makeResponse(c, http.StatusInternalServerError, "can't sign in the user")
 	}
 
 	return c.JSON(http.StatusOK, struct {
-		AccessToken  string `json:"accessToken"`
-		RefreshToken string `json:"refreshToken"`
+		AccessToken string `json:"accessToken"`
 	}{
-		AccessToken:  accessToken,
-		RefreshToken: refreshToken,
+		AccessToken: accessToken,
 	})
 }

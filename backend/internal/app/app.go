@@ -1,6 +1,7 @@
 package app
 
 import (
+	vtb2 "coffee-layered-architecture/api/vtb"
 	"coffee-layered-architecture/internal/config"
 	handler2 "coffee-layered-architecture/internal/handler"
 	postgres2 "coffee-layered-architecture/internal/postgres"
@@ -14,7 +15,6 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
-	"time"
 )
 
 func Run(configPath string) {
@@ -39,10 +39,16 @@ func Run(configPath string) {
 	log.Println("database has been connected")
 
 	postgres := postgres2.NewPostgres(pool)
-	tokenManager := auth.NewTokenManager(1*time.Minute, 2*time.Minute)
 
-	service := service2.NewService(postgres, tokenManager)
+	tokenManager := &auth.TokenManager{
+		AccessTTL:  cfg.TokenManager.AccessTTL,
+		SigningKey: os.Getenv("SIGNING_KEY"),
+	}
 
+	client := new(http.Client)
+	vtb := vtb2.NewVtb(client)
+
+	service := service2.NewService(postgres, tokenManager, vtb)
 	handler := handler2.NewHandler(cfg, service)
 
 	srv := server.NewServer(cfg, handler.Init())
@@ -52,7 +58,7 @@ func Run(configPath string) {
 		}
 	}()
 
-	log.Printf("server listening on port %s\n", cfg.HTTP.Port)
+	log.Printf("server listening on port %s\n", cfg.Server.Port)
 
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGTERM, syscall.SIGINT)

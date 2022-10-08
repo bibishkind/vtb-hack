@@ -7,9 +7,9 @@ import (
 
 const configPath = "configs/main"
 
-// @title VTB HACK API
+// @title VTB Hack API
 // @version 1.0
-// @description API for VTB HACK
+// @description API for VTB Hack
 // @termsOfService http://swagger.io/terms/
 
 // @contact.name API Support

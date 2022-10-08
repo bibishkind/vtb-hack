@@ -7,7 +7,8 @@ CREATE TABLE users (
 	last_name varchar(255) NOT NULL DEFAULT '',
 	email varchar(255) NOT NULL DEFAULT '',
 	role int NOT NULL DEFAULT 0,
-	wallet varchar(255) NOT NULL
+	public_key varchar(255) NOT NULL,
+	private_key varchar(255) NOT NULL
 );
 
 CREATE TABLE teams (
@@ -58,9 +59,4 @@ CREATE TABLE cards (
 	body text NOT NULL DEFAULT '',
 	price real NOT NULL DEFAULT 0,
 	thumbnail varchar(255) NOT NULL DEFAULT ''
-);
-
-CREATE TABLE refresh_tokens (
-    id serial PRIMARY KEY,
-    token varchar(255) UNIQUE NOT NULL
 );

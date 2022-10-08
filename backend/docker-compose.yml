@@ -1,0 +1,33 @@
+version: "3.8"
+
+services:
+  api:
+    build: .
+    command: bash -c "
+      while !</dev/tcp/postgres/5432; do sleep 1; done;
+      go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
+      && migrate -path ./schemas -database ${DB_URL} up
+      && ./main
+      "
+    restart: always
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    container_name: "api"
+
+  postgres:
+    image: postgres
+    restart: always
+    ports:
+      - "5436:5432"
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    container_name: "postgres"
+
+volumes:
+  postgres:

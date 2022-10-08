@@ -1,0 +1,7 @@
+http:
+  port: 8080
+  readTimeout: 1s
+  writeTimeout: 1s
+  maxHeaderBytes: 1024
+
+requestTimeout: 2s

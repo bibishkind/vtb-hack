@@ -14,6 +14,7 @@ type Service interface {
 	Cards
 	Profile
 	Scores
+	Tasks
 }
 
 type Auth interface {
@@ -32,6 +33,11 @@ type Cards interface {
 	CreateCard(ctx context.Context, userId int, card *domain.Card) (int, error)
 	GetAllCards(ctx context.Context) ([]*domain.Card, error)
 	DeleteCard(ctx context.Context, userId int, cardId int) error
+}
+
+type Tasks interface {
+	CreateTask(ctx context.Context, userId int, task *domain.Task) (int, error)
+	GetAllTasks(ctx context.Context) ([]*domain.Task, error)
 }
 
 type Profile interface {

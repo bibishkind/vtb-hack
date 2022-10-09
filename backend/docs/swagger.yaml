@@ -30,6 +30,27 @@ definitions:
       username:
         type: string
     type: object
+  domain.Task:
+    properties:
+      body:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      priority:
+        type: integer
+      revenue:
+        type: number
+      status:
+        type: integer
+      thumbnail:
+        type: string
+      title:
+        type: string
+      type:
+        type: integer
+    type: object
   handler.CreateCardRequest:
     properties:
       card:
@@ -38,6 +59,16 @@ definitions:
   handler.CreateCardResponse:
     properties:
       cardId:
+        type: integer
+    type: object
+  handler.CreateTaskRequest:
+    properties:
+      task:
+        $ref: '#/definitions/domain.Task'
+    type: object
+  handler.CreateTaskResponse:
+    properties:
+      taskId:
         type: integer
     type: object
   handler.ErrorResponse:
@@ -52,6 +83,13 @@ definitions:
       cards:
         items:
           $ref: '#/definitions/domain.Card'
+        type: array
+    type: object
+  handler.GetAllTasksResponse:
+    properties:
+      tasks:
+        items:
+          $ref: '#/definitions/domain.Task'
         type: array
     type: object
   handler.GetBalanceResponse:
@@ -289,6 +327,60 @@ paths:
       summary: Update Score
       tags:
       - scores
+  /api/tasks:
+    get:
+      consumes:
+      - application/json
+      description: get all tasks
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.GetAllTasksResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+      summary: Get All Tasks
+      tags:
+      - tasks
+    post:
+      consumes:
+      - application/json
+      description: create task
+      parameters:
+      - description: task
+        in: body
+        name: task
+        required: true
+        schema:
+          $ref: '#/definitions/handler.CreateTaskRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.CreateTaskResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Create Task
+      tags:
+      - tasks
   /api/transfer/matic:
     post:
       consumes:

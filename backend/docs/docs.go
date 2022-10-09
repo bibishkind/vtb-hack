@@ -295,6 +295,90 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/tasks": {
+            "get": {
+                "description": "get all tasks",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tasks"
+                ],
+                "summary": "Get All Tasks",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handler.GetAllTasksResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "create task",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tasks"
+                ],
+                "summary": "Create Task",
+                "parameters": [
+                    {
+                        "description": "task",
+                        "name": "task",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handler.CreateTaskRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handler.CreateTaskResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/transfer/matic": {
             "post": {
                 "security": [
@@ -540,6 +624,38 @@ const docTemplate = `{
                 }
             }
         },
+        "domain.Task": {
+            "type": "object",
+            "properties": {
+                "body": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "priority": {
+                    "type": "integer"
+                },
+                "revenue": {
+                    "type": "number"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "thumbnail": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "integer"
+                }
+            }
+        },
         "handler.CreateCardRequest": {
             "type": "object",
             "properties": {
@@ -552,6 +668,22 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "cardId": {
+                    "type": "integer"
+                }
+            }
+        },
+        "handler.CreateTaskRequest": {
+            "type": "object",
+            "properties": {
+                "task": {
+                    "$ref": "#/definitions/domain.Task"
+                }
+            }
+        },
+        "handler.CreateTaskResponse": {
+            "type": "object",
+            "properties": {
+                "taskId": {
                     "type": "integer"
                 }
             }
@@ -574,6 +706,17 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/domain.Card"
+                    }
+                }
+            }
+        },
+        "handler.GetAllTasksResponse": {
+            "type": "object",
+            "properties": {
+                "tasks": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.Task"
                     }
                 }
             }

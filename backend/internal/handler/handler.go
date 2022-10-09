@@ -45,6 +45,9 @@ func (h *Handler) Init() *echo.Echo {
 		api.POST("/cards", h.CreateCard, h.AuthMiddleware)
 		api.DELETE("/cards/:card_id", h.DeleteCard, h.AuthMiddleware)
 
+		api.POST("/tasks", h.CreateTask, h.AuthMiddleware)
+		api.GET("/tasks", h.GetAllTasks)
+
 		api.GET("/profile", h.GetProfile, h.AuthMiddleware)
 
 		api.PUT("/score", h.UpdateScore, h.AuthMiddleware)

@@ -12,6 +12,7 @@ type Postgres interface {
 	Users
 	Cards
 	Scores
+	Tasks
 }
 
 type Transactions interface {
@@ -30,6 +31,11 @@ type Cards interface {
 	CreateCard(ctx context.Context, tx pgx.Tx, card *domain.Card) (int, error)
 	GetAllCards(ctx context.Context, tx pgx.Tx) ([]*domain.Card, error)
 	DeleteCard(ctx context.Context, tx pgx.Tx, cardId int) error
+}
+
+type Tasks interface {
+	CreateTask(ctx context.Context, tx pgx.Tx, task *domain.Task) (int, error)
+	GetAllTasks(ctx context.Context, tx pgx.Tx) ([]*domain.Task, error)
 }
 
 type Scores interface {

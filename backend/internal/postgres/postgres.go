@@ -10,6 +10,7 @@ import (
 type Postgres interface {
 	Transactions
 	Users
+	Cards
 }
 
 type Transactions interface {
@@ -22,6 +23,10 @@ type Users interface {
 	CreateUser(ctx context.Context, tx pgx.Tx, user *domain.User) error
 	GetUserByUsername(ctx context.Context, tx pgx.Tx, username string) (*domain.User, error)
 	GetUserById(ctx context.Context, tx pgx.Tx, id int) (*domain.User, error)
+}
+
+type Cards interface {
+	CreateCard(ctx context.Context, tx pgx.Tx, card *domain.Card) (int, error)
 }
 
 type postgres struct {

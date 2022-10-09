@@ -1,5 +1,45 @@
 basePath: /
 definitions:
+  domain.Card:
+    properties:
+      body:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      price:
+        type: number
+      thumbnail:
+        type: string
+      title:
+        type: string
+    type: object
+  domain.Profile:
+    properties:
+      email:
+        type: string
+      firstName:
+        type: string
+      lastName:
+        type: string
+      middleName:
+        type: string
+      role:
+        type: integer
+      username:
+        type: string
+    type: object
+  handler.CreateCardRequest:
+    properties:
+      card:
+        $ref: '#/definitions/domain.Card'
+    type: object
+  handler.CreateCardResponse:
+    properties:
+      cardId:
+        type: integer
+    type: object
   handler.ErrorResponse:
     properties:
       code:
@@ -13,6 +53,11 @@ definitions:
         type: number
       balanceRubles:
         type: number
+    type: object
+  handler.GetProfileResponse:
+    properties:
+      profile:
+        $ref: '#/definitions/domain.Profile'
     type: object
   handler.SignInRequest:
     properties:
@@ -86,6 +131,63 @@ paths:
       summary: Get Balance
       tags:
       - finance
+  /api/cards:
+    post:
+      consumes:
+      - application/json
+      description: create card
+      parameters:
+      - description: card
+        in: body
+        name: card
+        required: true
+        schema:
+          $ref: '#/definitions/handler.CreateCardRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.CreateCardResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Create Card
+      tags:
+      - cards
+  /api/profile:
+    get:
+      consumes:
+      - application/json
+      description: get profile
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.GetProfileResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Create Profile
+      tags:
+      - profile
   /api/transfer/matic:
     post:
       consumes:

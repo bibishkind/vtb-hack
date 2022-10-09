@@ -11,6 +11,8 @@ import (
 type Service interface {
 	Auth
 	Finance
+	Cards
+	Profile
 }
 
 type Auth interface {
@@ -23,6 +25,14 @@ type Finance interface {
 	GetBalance(ctx context.Context, userId int) (float32, float32, error)
 	TransferMatic(ctx context.Context, senderId int, receiverId int, amount float32) (string, error)
 	TransferRuble(ctx context.Context, senderId int, receiverId int, amount float32) (string, error)
+}
+
+type Cards interface {
+	CreateCard(ctx context.Context, userId int, card *domain.Card) (int, error)
+}
+
+type Profile interface {
+	GetProfile(ctx context.Context, userId int) (*domain.Profile, error)
 }
 
 type service struct {

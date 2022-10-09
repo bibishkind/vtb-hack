@@ -37,6 +37,10 @@ func (h *Handler) Init() *echo.Echo {
 			transfer.POST("/matic", h.TransferMatic)
 			transfer.POST("/ruble", h.TransferRuble)
 		}
+
+		api.POST("/cards", h.CreateCard)
+
+		api.GET("/profile", h.GetProfile)
 	}
 
 	router.GET("/swagger/*", echoSwagger.WrapHandler)

@@ -8,26 +8,21 @@ import (
 	"net/http"
 )
 
-type CreateCardRequest struct {
-	Card *domain.Card `json:"card"`
+type GetProfileResponse struct {
+	Profile *domain.Profile `json:"profile"`
 }
 
-type CreateCardResponse struct {
-	CardId int `json:"cardId"`
-}
-
-// @Summary Create Card
+// @Summary Create Profile
 // @Security ApiKeyAuth
-// @Tags cards
-// @Description create card
+// @Tags profile
+// @Description get profile
 // @Accept json
 // @Produce json
-// @Param card body CreateCardRequest true "card"
-// @Success 200 {object} CreateCardResponse
+// @Success 200 {object} GetProfileResponse
 // @Failure 401 {object} ErrorResponse
 // @Failure 500 {object} ErrorResponse
-// @Router /api/cards [post]
-func (h *Handler) CreateCard(c echo.Context) error {
+// @Router /api/profile [get]
+func (h *Handler) GetProfile(c echo.Context) error {
 	ctx := context.Background()
 	ctx, _ = context.WithTimeout(ctx, h.requestTimeout)
 
@@ -36,18 +31,12 @@ func (h *Handler) CreateCard(c echo.Context) error {
 		return makeErrorResponse(c, http.StatusUnauthorized, errors.New("invalid user id"))
 	}
 
-	req := new(CreateCardRequest)
-
-	if err := c.Bind(req); err != nil {
-		return makeErrorResponse(c, http.StatusBadRequest, err)
-	}
-
-	cardId, err := h.service.CreateCard(ctx, userId, req.Card)
+	profile, err := h.service.GetProfile(ctx, userId)
 	if err != nil {
 		return makeErrorResponse(c, http.StatusInternalServerError, err)
 	}
 
 	return c.JSON(http.StatusOK, map[string]interface{}{
-		"cardId": cardId,
+		"profile": profile,
 	})
 }

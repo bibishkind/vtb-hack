@@ -7,7 +7,7 @@ import (
 )
 
 func (p *postgres) CreateTask(ctx context.Context, tx pgx.Tx, task *domain.Task) (int, error) {
-	q1 := `insert into cards (title, description, body, revenue, type, priority, status, thumbnail) values ($1, $2, $3, $4, $5, $6, $7, $8) returning id`
+	q1 := `insert into tasks (title, description, body, revenue, type, priority, status, thumbnail) values ($1, $2, $3, $4, $5, $6, $7, $8) returning id`
 	row := tx.QueryRow(ctx, q1, task.Title, task.Description, task.Body, task.Revenue, task.Type, task.Priority, task.Status, task.Thumbnail)
 
 	var taskId int

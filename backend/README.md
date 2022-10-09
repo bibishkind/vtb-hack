@@ -1,5 +1,5 @@
 # Backend app for VTB Hack
-
+[link](https://github.com/redpower5x5/vtb-team-tetris) to tetris repo
 ## Build & Run (locally)
 ### Prerequisites
 - go 1.16
@@ -15,3 +15,4 @@ SIGNING_KEY=secret
 ```
 
 Use `docker-compose up` to build and run project.
+

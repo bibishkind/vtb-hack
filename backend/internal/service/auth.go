@@ -21,6 +21,8 @@ func (s *service) SignUp(ctx context.Context, user *domain.User) error {
 	user.PublicKey = publicKey
 	user.PrivateKey = privateKey
 
+	user.Password = s.hasher.HashSha256(user.Password)
+
 	userId, err := s.postgres.CreateUser(ctx, tx, user)
 	if err != nil {
 		return err
@@ -46,7 +48,7 @@ func (s *service) SignIn(ctx context.Context, user *domain.User) (string, error)
 		return "", err
 	}
 
-	if user.Password != user2.Password {
+	if s.hasher.HashSha256(user.Password) != user2.Password {
 		return "", errors.New("wrong password")
 	}
 

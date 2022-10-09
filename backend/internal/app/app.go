@@ -8,6 +8,7 @@ import (
 	"coffee-layered-architecture/internal/server"
 	service2 "coffee-layered-architecture/internal/service"
 	"coffee-layered-architecture/pkg/auth"
+	"coffee-layered-architecture/pkg/hash"
 	"context"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"log"
@@ -45,12 +46,14 @@ func Run(configPath string) {
 		SigningKey: os.Getenv("SIGNING_KEY"),
 	}
 
+	hasher := hash.NewHasher(os.Getenv("SALT"))
+
 	client := &http.Client{
 		Timeout: cfg.Client.Timeout,
 	}
 	vtb := vtb2.NewVtb(client)
 
-	service := service2.NewService(postgres, tokenManager, vtb)
+	service := service2.NewService(postgres, tokenManager, hasher, vtb)
 	handler := handler2.NewHandler(cfg, service)
 
 	srv := server.NewServer(cfg, handler.Init())

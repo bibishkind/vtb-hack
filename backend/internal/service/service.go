@@ -5,6 +5,7 @@ import (
 	"coffee-layered-architecture/internal/domain"
 	postgres2 "coffee-layered-architecture/internal/postgres"
 	"coffee-layered-architecture/pkg/auth"
+	"coffee-layered-architecture/pkg/hash"
 	"context"
 )
 
@@ -52,13 +53,15 @@ type Scores interface {
 type service struct {
 	postgres     postgres2.Postgres
 	tokenManager *auth.TokenManager
+	hasher       hash.Hasher
 	vtb          vtb2.Vtb
 }
 
-func NewService(postgres postgres2.Postgres, tokenManager *auth.TokenManager, vtb vtb2.Vtb) Service {
+func NewService(postgres postgres2.Postgres, tokenManager *auth.TokenManager, hasher hash.Hasher, vtb vtb2.Vtb) Service {
 	return &service{
 		postgres:     postgres,
 		tokenManager: tokenManager,
+		hasher:       hasher,
 		vtb:          vtb,
 	}
 }

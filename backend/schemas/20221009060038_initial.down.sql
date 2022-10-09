@@ -5,4 +5,3 @@ DROP TABLE tasks CASCADE;
 DROP TABLE teams_tasks;
 DROP TABLE users_tasks;
 DROP TABLE cards;
-DROP TABLE refresh_tokens;

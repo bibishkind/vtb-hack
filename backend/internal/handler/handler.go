@@ -46,6 +46,8 @@ func (h *Handler) Init() *echo.Echo {
 		api.DELETE("/cards/:card_id", h.DeleteCard, h.AuthMiddleware)
 
 		api.GET("/profile", h.GetProfile, h.AuthMiddleware)
+
+		api.PUT("/score", h.UpdateScore, h.AuthMiddleware)
 	}
 
 	router.GET("/swagger/*", echoSwagger.WrapHandler)

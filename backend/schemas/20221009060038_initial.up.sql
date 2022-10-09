@@ -60,3 +60,10 @@ CREATE TABLE cards (
 	price real NOT NULL DEFAULT 0,
 	thumbnail varchar(255) NOT NULL DEFAULT ''
 );
+
+CREATE TABLE scores (
+    user_id int UNIQUE,
+    score int NOT NULL DEFAULT 0,
+
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);

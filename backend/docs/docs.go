@@ -218,12 +218,66 @@ const docTemplate = `{
                 "tags": [
                     "profile"
                 ],
-                "summary": "Create Profile",
+                "summary": "Get Profile",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/handler.GetProfileResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/score": {
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "update score",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "scores"
+                ],
+                "summary": "Update Score",
+                "parameters": [
+                    {
+                        "description": "updateScore",
+                        "name": "updateScore",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handler.UpdateScoreRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ErrorResponse"
                         }
                     },
                     "401": {
@@ -594,6 +648,14 @@ const docTemplate = `{
                     "type": "integer"
                 }
             }
+        },
+        "handler.UpdateScoreRequest": {
+            "type": "object",
+            "properties": {
+                "score": {
+                    "type": "integer"
+                }
+            }
         }
     },
     "securityDefinitions": {
@@ -608,9 +670,9 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "localhost:8080",
+	Host:             "gaz.onixx.org",
 	BasePath:         "/",
-	Schemes:          []string{},
+	Schemes:          []string{"https"},
 	Title:            "VTB Hack API",
 	Description:      "API for VTB Hack",
 	InfoInstanceName: "swagger",

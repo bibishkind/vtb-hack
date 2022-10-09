@@ -11,6 +11,7 @@ type Postgres interface {
 	Transactions
 	Users
 	Cards
+	Scores
 }
 
 type Transactions interface {
@@ -20,7 +21,7 @@ type Transactions interface {
 }
 
 type Users interface {
-	CreateUser(ctx context.Context, tx pgx.Tx, user *domain.User) error
+	CreateUser(ctx context.Context, tx pgx.Tx, user *domain.User) (int, error)
 	GetUserByUsername(ctx context.Context, tx pgx.Tx, username string) (*domain.User, error)
 	GetUserById(ctx context.Context, tx pgx.Tx, id int) (*domain.User, error)
 }
@@ -29,6 +30,12 @@ type Cards interface {
 	CreateCard(ctx context.Context, tx pgx.Tx, card *domain.Card) (int, error)
 	GetAllCards(ctx context.Context, tx pgx.Tx) ([]*domain.Card, error)
 	DeleteCard(ctx context.Context, tx pgx.Tx, cardId int) error
+}
+
+type Scores interface {
+	CreateScore(ctx context.Context, tx pgx.Tx, userId int) error
+	UpdateScore(ctx context.Context, tx pgx.Tx, userId int, score int) error
+	GetScore(ctx context.Context, tx pgx.Tx, userId int) (int, error)
 }
 
 type postgres struct {

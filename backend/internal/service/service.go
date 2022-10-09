@@ -13,6 +13,7 @@ type Service interface {
 	Finance
 	Cards
 	Profile
+	Scores
 }
 
 type Auth interface {
@@ -35,6 +36,10 @@ type Cards interface {
 
 type Profile interface {
 	GetProfile(ctx context.Context, userId int) (*domain.Profile, error)
+}
+
+type Scores interface {
+	UpdateScore(ctx context.Context, userId int, score int) error
 }
 
 type service struct {

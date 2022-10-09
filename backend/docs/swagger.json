@@ -1,4 +1,7 @@
 {
+    "schemes": [
+        "https"
+    ],
     "swagger": "2.0",
     "info": {
         "description": "API for VTB Hack",
@@ -15,7 +18,7 @@
         },
         "version": "1.0"
     },
-    "host": "localhost:8080",
+    "host": "gaz.onixx.org",
     "basePath": "/",
     "paths": {
         "/api/balance": {
@@ -211,12 +214,66 @@
                 "tags": [
                     "profile"
                 ],
-                "summary": "Create Profile",
+                "summary": "Get Profile",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/handler.GetProfileResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/score": {
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "update score",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "scores"
+                ],
+                "summary": "Update Score",
+                "parameters": [
+                    {
+                        "description": "updateScore",
+                        "name": "updateScore",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handler.UpdateScoreRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ErrorResponse"
                         }
                     },
                     "401": {
@@ -584,6 +641,14 @@
                     "type": "number"
                 },
                 "receiverId": {
+                    "type": "integer"
+                }
+            }
+        },
+        "handler.UpdateScoreRequest": {
+            "type": "object",
+            "properties": {
+                "score": {
                     "type": "integer"
                 }
             }

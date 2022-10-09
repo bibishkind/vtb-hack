@@ -21,7 +21,12 @@ func (s *service) SignUp(ctx context.Context, user *domain.User) error {
 	user.PublicKey = publicKey
 	user.PrivateKey = privateKey
 
-	if err = s.postgres.CreateUser(ctx, tx, user); err != nil {
+	userId, err := s.postgres.CreateUser(ctx, tx, user)
+	if err != nil {
+		return err
+	}
+
+	if err = s.postgres.CreateScore(ctx, tx, userId); err != nil {
 		return err
 	}
 

@@ -99,7 +99,12 @@ definitions:
       receiverId:
         type: integer
     type: object
-host: localhost:8080
+  handler.UpdateScoreRequest:
+    properties:
+      score:
+        type: integer
+    type: object
+host: gaz.onixx.org
 info:
   contact:
     email: support@swagger.io
@@ -247,9 +252,43 @@ paths:
             $ref: '#/definitions/handler.ErrorResponse'
       security:
       - ApiKeyAuth: []
-      summary: Create Profile
+      summary: Get Profile
       tags:
       - profile
+  /api/score:
+    put:
+      consumes:
+      - application/json
+      description: update score
+      parameters:
+      - description: updateScore
+        in: body
+        name: updateScore
+        required: true
+        schema:
+          $ref: '#/definitions/handler.UpdateScoreRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Update Score
+      tags:
+      - scores
   /api/transfer/matic:
     post:
       consumes:
@@ -376,6 +415,8 @@ paths:
       summary: Authorization of a user
       tags:
       - auth
+schemes:
+- https
 securityDefinitions:
   ApiKeyAuth:
     in: header

@@ -38,6 +38,7 @@ type Cards interface {
 type Tasks interface {
 	CreateTask(ctx context.Context, userId int, task *domain.Task) (int, error)
 	GetAllTasks(ctx context.Context) ([]*domain.Task, error)
+	DeleteTask(ctx context.Context, userId int, taskId int) error
 }
 
 type Profile interface {

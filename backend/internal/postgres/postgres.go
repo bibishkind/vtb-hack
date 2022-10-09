@@ -36,6 +36,7 @@ type Cards interface {
 type Tasks interface {
 	CreateTask(ctx context.Context, tx pgx.Tx, task *domain.Task) (int, error)
 	GetAllTasks(ctx context.Context, tx pgx.Tx) ([]*domain.Task, error)
+	DeleteTask(ctx context.Context, tx pgx.Tx, taskId int) error
 }
 
 type Scores interface {

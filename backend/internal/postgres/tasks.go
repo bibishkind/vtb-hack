@@ -39,3 +39,9 @@ func (p *postgres) GetAllTasks(ctx context.Context, tx pgx.Tx) ([]*domain.Task, 
 
 	return tasks, nil
 }
+
+func (p *postgres) DeleteTask(ctx context.Context, tx pgx.Tx, taskId int) error {
+	q1 := `delete from tasks where id=$1`
+	_, err := tx.Exec(ctx, q1, taskId)
+	return err
+}

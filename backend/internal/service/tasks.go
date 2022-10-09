@@ -46,3 +46,27 @@ func (s *service) GetAllTasks(ctx context.Context) ([]*domain.Task, error) {
 	s.postgres.CommitTx(ctx, tx)
 	return cards, nil
 }
+
+func (s *service) DeleteTask(ctx context.Context, userId int, taskId int) error {
+	tx, err := s.postgres.AcquireTx(ctx)
+	if err != nil {
+		return err
+	}
+	defer s.postgres.RollbackTx(ctx, tx)
+
+	user, err := s.postgres.GetUserById(ctx, tx, userId)
+	if err != nil {
+		return err
+	}
+
+	if user.Role != domain.UserRoleAdmin {
+		return errors.New("user must have admin role")
+	}
+
+	if err = s.postgres.DeleteTask(ctx, tx, taskId); err != nil {
+		return err
+	}
+
+	s.postgres.CommitTx(ctx, tx)
+	return nil
+}

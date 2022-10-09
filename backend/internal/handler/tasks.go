@@ -6,6 +6,7 @@ import (
 	"errors"
 	"github.com/labstack/echo/v4"
 	"net/http"
+	"strconv"
 )
 
 type CreateTaskRequest struct {
@@ -77,4 +78,38 @@ func (h *Handler) GetAllTasks(c echo.Context) error {
 	return c.JSON(http.StatusOK, map[string]interface{}{
 		"tasks": tasks,
 	})
+}
+
+// @Summary Delete Task
+// @Security ApiKeyAuth
+// @Tags tasks
+// @Description delete task
+// @Param task_id   path int true "Task Id"
+// @Accept json
+// @Produce json
+// @Success 204
+// @Failure 401 {object} ErrorResponse
+// @Failure 400 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /api/cards/{task_id} [delete]
+func (h *Handler) DeleteTask(c echo.Context) error {
+	ctx := context.Background()
+	ctx, _ = context.WithTimeout(ctx, h.requestTimeout)
+
+	userId, ok := c.Get("userId").(int)
+	if !ok {
+		return makeErrorResponse(c, http.StatusUnauthorized, errors.New("invalid user id"))
+	}
+
+	taskIdString := c.Param("task_id")
+	taskId, err := strconv.Atoi(taskIdString)
+	if err != nil {
+		return makeErrorResponse(c, http.StatusBadRequest, err)
+	}
+
+	if err = h.service.DeleteTask(ctx, userId, taskId); err != nil {
+		return makeErrorResponse(c, http.StatusInternalServerError, err)
+	}
+
+	return c.NoContent(http.StatusNoContent)
 }

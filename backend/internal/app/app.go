@@ -45,7 +45,9 @@ func Run(configPath string) {
 		SigningKey: os.Getenv("SIGNING_KEY"),
 	}
 
-	client := new(http.Client)
+	client := &http.Client{
+		Timeout: cfg.Client.Timeout,
+	}
 	vtb := vtb2.NewVtb(client)
 
 	service := service2.NewService(postgres, tokenManager, vtb)

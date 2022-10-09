@@ -3,21 +3,22 @@ package handler
 import (
 	"coffee-layered-architecture/internal/domain"
 	"context"
+	"errors"
 	"github.com/labstack/echo/v4"
 	"net/http"
 )
 
-type SwaggerSignUpRequest struct {
+type SignUpRequest struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
 }
 
-type SwaggerSignInRequest struct {
+type SignInRequest struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
 }
 
-type SwaggerSignInResponse struct {
+type SignInResponse struct {
 	AccessToken string `json:"accessToken"`
 }
 
@@ -26,10 +27,10 @@ type SwaggerSignInResponse struct {
 // @Description authorizes user
 // @Accept json
 // @Produce json
-// @Param user body SwaggerSignUpRequest true "user"
-// @Success 201 {object} Response
-// @Failure 400 {object} Response
-// @Failure 500 {object} Response
+// @Param user body SignUpRequest true "user"
+// @Success 201
+// @Failure 400 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
 // @Router /auth/sign-up [post]
 func (h *Handler) SignUp(c echo.Context) error {
 	ctx := context.Background()
@@ -37,18 +38,18 @@ func (h *Handler) SignUp(c echo.Context) error {
 
 	user := new(domain.User)
 	if err := c.Bind(user); err != nil {
-		return makeResponse(c, http.StatusBadRequest, err.Error())
+		return makeErrorResponse(c, http.StatusBadRequest, err)
 	}
 
 	if user.Username == "" || user.Password == "" {
-		return makeResponse(c, http.StatusBadRequest, "username and password are required")
+		return makeErrorResponse(c, http.StatusBadRequest, errors.New("username and password required"))
 	}
 
 	if err := h.service.SignUp(ctx, user); err != nil {
-		return makeResponse(c, http.StatusInternalServerError, "can't sign up the user")
+		return makeErrorResponse(c, http.StatusInternalServerError, err)
 	}
 
-	return makeResponse(c, http.StatusCreated, "ok")
+	return c.NoContent(http.StatusCreated)
 }
 
 // @Summary Authentication of a user
@@ -56,32 +57,30 @@ func (h *Handler) SignUp(c echo.Context) error {
 // @Description authenticates user
 // @Accept json
 // @Produce json
-// @Param user body SwaggerSignInRequest true "user"
-// @Success 200 {object} SwaggerSignInResponse
-// @Failure 400 {object} Response
-// @Failure 500 {object} Response
+// @Param user body SignInRequest true "user"
+// @Success 200 {object} SignInResponse
+// @Failure 400 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
 // @Router /auth/sign-in [post]
 func (h *Handler) SignIn(c echo.Context) error {
 	ctx := context.Background()
 	ctx, _ = context.WithTimeout(ctx, h.requestTimeout)
 
 	user := new(domain.User)
-	if err := c.Bind(&user); err != nil {
-		return makeResponse(c, http.StatusBadRequest, "can't bind the user")
+	if err := c.Bind(user); err != nil {
+		return makeErrorResponse(c, http.StatusBadRequest, err)
 	}
 
 	if user.Username == "" || user.Password == "" {
-		return makeResponse(c, http.StatusBadRequest, "username and password are required")
+		return makeErrorResponse(c, http.StatusBadRequest, errors.New("username and password required"))
 	}
 
 	accessToken, err := h.service.SignIn(ctx, user)
 	if err != nil {
-		return makeResponse(c, http.StatusInternalServerError, "can't sign in the user")
+		return makeErrorResponse(c, http.StatusInternalServerError, err)
 	}
 
-	return c.JSON(http.StatusOK, struct {
-		AccessToken string `json:"accessToken"`
-	}{
-		AccessToken: accessToken,
+	return c.JSON(http.StatusOK, map[string]interface{}{
+		"accessToken": accessToken,
 	})
 }

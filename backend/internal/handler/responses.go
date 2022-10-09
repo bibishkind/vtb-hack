@@ -2,14 +2,14 @@ package handler
 
 import "github.com/labstack/echo/v4"
 
-type Response struct {
+type ErrorResponse struct {
 	Code int    `json:"code"`
 	Msg  string `json:"msg"`
 }
 
-func makeResponse(c echo.Context, code int, msg string) error {
-	return c.JSON(code, &Response{
+func makeErrorResponse(c echo.Context, code int, err error) error {
+	return c.JSON(code, &ErrorResponse{
 		Code: code,
-		Msg:  msg,
+		Msg:  err.Error(),
 	})
 }

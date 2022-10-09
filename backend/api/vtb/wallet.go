@@ -2,8 +2,10 @@ package vtb
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
+	"net/http"
 )
 
 type NewWalletResponse struct {
@@ -16,7 +18,7 @@ type WalletBalanceResponse struct {
 	CoinsAmount float32 `json:"coinsAmount"`
 }
 
-func (v *vtb) NewWallet() (string, string, error) {
+func (v *vtb) CreateWallet() (string, string, error) {
 	path := "/v1/wallets/new"
 	resp, err := v.client.Post(baseUrl+path, "application/json", nil)
 	if err != nil {
@@ -28,6 +30,10 @@ func (v *vtb) NewWallet() (string, string, error) {
 		return "", "", err
 	}
 
+	if resp.StatusCode != http.StatusOK {
+		return "", "", errors.New(string(b))
+	}
+
 	j := new(NewWalletResponse)
 
 	if err = json.Unmarshal(b, j); err != nil {
@@ -37,9 +43,9 @@ func (v *vtb) NewWallet() (string, string, error) {
 	return j.PublicKey, j.PrivateKey, nil
 }
 
-func (v *vtb) WalletBalance(publicKey string) (float32, float32, error) {
+func (v *vtb) GetBalance(publicKey string) (float32, float32, error) {
 	path := fmt.Sprintf("/v1/wallets/%s/balance", publicKey)
-	resp, err := v.client.Post(baseUrl+path, "application/json", nil)
+	resp, err := v.client.Get(baseUrl + path)
 	if err != nil {
 		return 0, 0, err
 	}
@@ -47,6 +53,10 @@ func (v *vtb) WalletBalance(publicKey string) (float32, float32, error) {
 	b, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return 0, 0, err
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return 0, 0, errors.New(string(b))
 	}
 
 	j := new(WalletBalanceResponse)

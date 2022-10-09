@@ -3,16 +3,17 @@ package service
 import (
 	"coffee-layered-architecture/internal/domain"
 	"context"
+	"errors"
 )
 
-func (s *Service) SignUp(ctx context.Context, user *domain.User) error {
+func (s *service) SignUp(ctx context.Context, user *domain.User) error {
 	tx, err := s.postgres.AcquireTx(ctx)
 	if err != nil {
 		return err
 	}
-	defer tx.Rollback(ctx)
+	defer s.postgres.RollbackTx(ctx, tx)
 
-	publicKey, privateKey, err := s.vtb.NewWallet()
+	publicKey, privateKey, err := s.vtb.CreateWallet()
 	if err != nil {
 		return err
 	}
@@ -24,30 +25,35 @@ func (s *Service) SignUp(ctx context.Context, user *domain.User) error {
 		return err
 	}
 
-	tx.Commit(ctx)
+	s.postgres.CommitTx(ctx, tx)
 	return nil
 }
-func (s *Service) SignIn(ctx context.Context, user *domain.User) (string, error) {
+
+func (s *service) SignIn(ctx context.Context, user *domain.User) (string, error) {
 	tx, err := s.postgres.AcquireTx(ctx)
 	if err != nil {
 		return "", err
 	}
-	defer tx.Rollback(ctx)
+	defer s.postgres.RollbackTx(ctx, tx)
 
-	user, err = s.postgres.GetUserByUsername(ctx, tx, user.Username)
+	user2, err := s.postgres.GetUserByUsername(ctx, tx, user.Username)
 	if err != nil {
 		return "", err
 	}
 
-	accessToken, err := s.tokenManager.GenerateAccessToken(user.Id)
+	if user.Password != user2.Password {
+		return "", errors.New("wrong password")
+	}
+
+	accessToken, err := s.tokenManager.GenerateAccessToken(user2.Id)
 	if err != nil {
 		return "", err
 	}
 
-	tx.Commit(ctx)
+	s.postgres.CommitTx(ctx, tx)
 	return accessToken, nil
 }
 
-func (s *Service) IdentifyUser(ctx context.Context, accessToken string) (int, error) {
+func (s *service) ParseAccessToken(accessToken string) (int, error) {
 	return s.tokenManager.ParseAccessToken(accessToken)
 }

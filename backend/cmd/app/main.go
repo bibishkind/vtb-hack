@@ -20,12 +20,11 @@ const configPath = "configs/main"
 // @license.url http://www.apache.org/licenses/LICENSE-2.0.html
 
 // @host localhost:8080
-// @BasePath /api
+// @BasePath /
 
 // @securityDefinitions.apiKey ApiKeyAuth
 // @in header
 // @name Authorization
-
 func main() {
 	app.Run(configPath)
 }

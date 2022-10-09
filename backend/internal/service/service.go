@@ -8,24 +8,31 @@ import (
 	"context"
 )
 
-type Client interface {
+type Service interface {
 	Auth
+	Finance
 }
 
 type Auth interface {
 	SignUp(ctx context.Context, user *domain.User) error
 	SignIn(ctx context.Context, user *domain.User) (string, error)
-	IdentifyUser(ctx context.Context, accessToken string) (int, error)
+	ParseAccessToken(accessToken string) (int, error)
 }
 
-type Service struct {
-	postgres     postgres2.Client
+type Finance interface {
+	GetBalance(ctx context.Context, userId int) (float32, float32, error)
+	TransferMatic(ctx context.Context, senderId int, receiverId int, amount float32) (string, error)
+	TransferRuble(ctx context.Context, senderId int, receiverId int, amount float32) (string, error)
+}
+
+type service struct {
+	postgres     postgres2.Postgres
 	tokenManager *auth.TokenManager
 	vtb          vtb2.Vtb
 }
 
-func NewService(postgres postgres2.Client, tokenManager *auth.TokenManager, vtb vtb2.Vtb) *Service {
-	return &Service{
+func NewService(postgres postgres2.Postgres, tokenManager *auth.TokenManager, vtb vtb2.Vtb) Service {
+	return &service{
 		postgres:     postgres,
 		tokenManager: tokenManager,
 		vtb:          vtb,

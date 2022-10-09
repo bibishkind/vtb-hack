@@ -9,3 +9,6 @@ handler:
 
 tokenManager:
   accessTTL: 240h
+
+client:
+  timeout: 2s

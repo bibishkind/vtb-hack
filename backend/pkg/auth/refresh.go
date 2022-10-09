@@ -8,7 +8,7 @@ import (
 )
 
 type RefreshClaims struct {
-	Id string
+	Uuid string `json:"uuid"`
 	*jwt.RegisteredClaims
 }
 
@@ -20,7 +20,7 @@ func (m *TokenManager) GenerateRefreshToken() (string, error) {
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &RefreshClaims{
-		Id:               uuid.Must(uuid.NewRandom()).String(),
+		Uuid:             uuid.Must(uuid.NewRandom()).String(),
 		RegisteredClaims: claims,
 	})
 
@@ -41,7 +41,7 @@ func (m *TokenManager) ParseRefreshToken(tokenString string) (string, error) {
 	}
 
 	if claims, ok := token.Claims.(*RefreshClaims); ok && token.Valid {
-		return claims.Id, nil
+		return claims.Uuid, nil
 	} else {
 		return "", errors.New("failed to parse refresh.go token")
 	}

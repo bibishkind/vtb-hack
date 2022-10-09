@@ -12,8 +12,8 @@ type Vtb interface {
 }
 
 type Wallet interface {
-	NewWallet() (string, string, error)
-	WalletBalance(publicKey string) (float32, float32, error)
+	CreateWallet() (string, string, error)
+	GetBalance(publicKey string) (float32, float32, error)
 }
 
 type Transfer interface {

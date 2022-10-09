@@ -14,6 +14,7 @@ type (
 		Server       *ServerConfig
 		Handler      *HandlerConfig
 		TokenManager *TokenManagerConfig
+		Client       *ClientConfig
 	}
 
 	PostgresConfig struct {
@@ -33,6 +34,10 @@ type (
 
 	TokenManagerConfig struct {
 		AccessTTL time.Duration
+	}
+
+	ClientConfig struct {
+		Timeout time.Duration
 	}
 )
 
@@ -65,6 +70,9 @@ func Init(configPath string) (*Config, error) {
 		},
 		TokenManager: &TokenManagerConfig{
 			AccessTTL: viper.GetDuration("tokenManager.accessTTL"),
+		},
+		Client: &ClientConfig{
+			Timeout: viper.GetDuration("client.timeout"),
 		},
 	}
 

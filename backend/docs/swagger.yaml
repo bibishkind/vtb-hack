@@ -1,30 +1,51 @@
-basePath: /api
+basePath: /
 definitions:
-  handler.Response:
+  handler.ErrorResponse:
     properties:
       code:
         type: integer
       msg:
         type: string
     type: object
-  handler.SwaggerSignInRequest:
+  handler.GetBalanceResponse:
+    properties:
+      balanceMatic:
+        type: number
+      balanceRubles:
+        type: number
+    type: object
+  handler.SignInRequest:
     properties:
       password:
         type: string
       username:
         type: string
     type: object
-  handler.SwaggerSignInResponse:
+  handler.SignInResponse:
     properties:
       accessToken:
         type: string
     type: object
-  handler.SwaggerSignUpRequest:
+  handler.SignUpRequest:
     properties:
       password:
         type: string
       username:
         type: string
+    type: object
+  handler.TransferMaticRequest:
+    properties:
+      amount:
+        type: number
+      receiverId:
+        type: integer
+    type: object
+  handler.TransferRubleRequest:
+    properties:
+      amount:
+        type: number
+      receiverId:
+        type: integer
     type: object
 host: localhost:8080
 info:
@@ -40,6 +61,99 @@ info:
   title: VTB Hack API
   version: "1.0"
 paths:
+  /api/balance:
+    get:
+      consumes:
+      - application/json
+      description: get balance of the user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.GetBalanceResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get Balance
+      tags:
+      - finance
+  /api/transfer/matic:
+    post:
+      consumes:
+      - application/json
+      description: transfer matic from current user to another
+      parameters:
+      - description: transferMatic
+        in: body
+        name: transferMatic
+        required: true
+        schema:
+          $ref: '#/definitions/handler.TransferMaticRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Transfer Matic
+      tags:
+      - finance
+  /api/transfer/ruble:
+    post:
+      consumes:
+      - application/json
+      description: transfer ruble from current user to another
+      parameters:
+      - description: transferRuble
+        in: body
+        name: transferRuble
+        required: true
+        schema:
+          $ref: '#/definitions/handler.TransferRubleRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Transfer Ruble
+      tags:
+      - finance
   /auth/sign-in:
     post:
       consumes:
@@ -51,22 +165,22 @@ paths:
         name: user
         required: true
         schema:
-          $ref: '#/definitions/handler.SwaggerSignInRequest'
+          $ref: '#/definitions/handler.SignInRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/handler.SwaggerSignInResponse'
+            $ref: '#/definitions/handler.SignInResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/handler.Response'
+            $ref: '#/definitions/handler.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/handler.Response'
+            $ref: '#/definitions/handler.ErrorResponse'
       summary: Authentication of a user
       tags:
       - auth
@@ -81,22 +195,20 @@ paths:
         name: user
         required: true
         schema:
-          $ref: '#/definitions/handler.SwaggerSignUpRequest'
+          $ref: '#/definitions/handler.SignUpRequest'
       produces:
       - application/json
       responses:
         "201":
           description: Created
-          schema:
-            $ref: '#/definitions/handler.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/handler.Response'
+            $ref: '#/definitions/handler.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/handler.Response'
+            $ref: '#/definitions/handler.ErrorResponse'
       summary: Authorization of a user
       tags:
       - auth

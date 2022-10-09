@@ -7,11 +7,11 @@ import (
 )
 
 type AccessClaims struct {
-	Id int
+	UserId int `json:"userId"`
 	*jwt.RegisteredClaims
 }
 
-func (m *TokenManager) GenerateAccessToken(id int) (string, error) {
+func (m *TokenManager) GenerateAccessToken(userId int) (string, error) {
 	signingKey := []byte(m.SigningKey)
 
 	claims := &jwt.RegisteredClaims{
@@ -19,7 +19,7 @@ func (m *TokenManager) GenerateAccessToken(id int) (string, error) {
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &AccessClaims{
-		Id:               id,
+		UserId:           userId,
 		RegisteredClaims: claims,
 	})
 
@@ -40,7 +40,7 @@ func (m *TokenManager) ParseAccessToken(tokenString string) (int, error) {
 	}
 
 	if claims, ok := token.Claims.(*AccessClaims); ok && token.Valid {
-		return claims.Id, nil
+		return claims.UserId, nil
 	} else {
 		return 0, errors.New("failed to parse access token")
 	}

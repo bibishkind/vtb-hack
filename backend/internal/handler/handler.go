@@ -9,11 +9,11 @@ import (
 )
 
 type Handler struct {
-	service        service2.Client
+	service        service2.Service
 	requestTimeout time.Duration
 }
 
-func NewHandler(cfg *config.Config, service service2.Client) *Handler {
+func NewHandler(cfg *config.Config, service service2.Service) *Handler {
 	return &Handler{
 		service:        service,
 		requestTimeout: cfg.Handler.RequestTimeout,
@@ -29,10 +29,15 @@ func (h *Handler) Init() *echo.Echo {
 		auth.POST("/sign-in", h.SignIn)
 	}
 
-	//api := router.Group("/api", h.AuthMiddleware)
-	//{
-	//
-	//}
+	api := router.Group("/api", h.AuthMiddleware)
+	{
+		api.GET("/balance", h.GetBalance)
+		transfer := api.Group("/transfer")
+		{
+			transfer.POST("/matic", h.TransferMatic)
+			transfer.POST("/ruble", h.TransferRuble)
+		}
+	}
 
 	router.GET("/swagger/*", echoSwagger.WrapHandler)
 

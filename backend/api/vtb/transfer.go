@@ -3,7 +3,10 @@ package vtb
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"io"
+	"log"
+	"net/http"
 )
 
 type transferMaticRequest struct {
@@ -25,7 +28,7 @@ type transferNftRequest struct {
 }
 
 type transferResponse struct {
-	TransactionHash string `json:"transactionHash"`
+	TransactionHash string `json:"transaction"`
 }
 
 func (v *vtb) TransferMatic(fromPrivateKey string, toPublicKey string, amount float32) (string, error) {
@@ -42,7 +45,7 @@ func (v *vtb) TransferMatic(fromPrivateKey string, toPublicKey string, amount fl
 		return "", err
 	}
 
-	resp, err := v.client.Post(path, "application/json", io.NopCloser(bytes.NewReader(b)))
+	resp, err := v.client.Post(baseUrl+path, "application/json", io.NopCloser(bytes.NewReader(b)))
 	if err != nil {
 		return "", err
 	}
@@ -52,17 +55,22 @@ func (v *vtb) TransferMatic(fromPrivateKey string, toPublicKey string, amount fl
 		return "", err
 	}
 
+	if resp.StatusCode != http.StatusOK {
+		return "", errors.New(string(b))
+	}
+
 	j := new(transferResponse)
 
 	if err = json.Unmarshal(b, j); err != nil {
 		return "", err
 	}
 
+	log.Println(j.TransactionHash)
 	return j.TransactionHash, nil
 }
 
 func (v *vtb) TransferRuble(fromPrivateKey string, toPublicKey string, amount float32) (string, error) {
-	path := "/v1/transfers/rubble"
+	path := "/v1/transfers/ruble"
 
 	req := &transferRubleRequest{
 		FromPrivateKey: fromPrivateKey,
@@ -75,7 +83,7 @@ func (v *vtb) TransferRuble(fromPrivateKey string, toPublicKey string, amount fl
 		return "", err
 	}
 
-	resp, err := v.client.Post(path, "application/json", io.NopCloser(bytes.NewReader(b)))
+	resp, err := v.client.Post(baseUrl+path, "application/json", io.NopCloser(bytes.NewReader(b)))
 	if err != nil {
 		return "", err
 	}
@@ -83,6 +91,10 @@ func (v *vtb) TransferRuble(fromPrivateKey string, toPublicKey string, amount fl
 	b, err = io.ReadAll(resp.Body)
 	if err != nil {
 		return "", err
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return "", errors.New(string(b))
 	}
 
 	j := new(transferResponse)
@@ -108,7 +120,7 @@ func (v *vtb) TransferNft(fromPrivateKey string, toPublicKey string, tokenId int
 		return "", err
 	}
 
-	resp, err := v.client.Post(path, "application/json", io.NopCloser(bytes.NewReader(b)))
+	resp, err := v.client.Post(baseUrl+path, "application/json", io.NopCloser(bytes.NewReader(b)))
 	if err != nil {
 		return "", err
 	}
@@ -116,6 +128,10 @@ func (v *vtb) TransferNft(fromPrivateKey string, toPublicKey string, tokenId int
 	b, err = io.ReadAll(resp.Body)
 	if err != nil {
 		return "", err
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return "", errors.New(string(b))
 	}
 
 	j := new(transferResponse)

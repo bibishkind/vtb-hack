@@ -27,6 +27,8 @@ type Users interface {
 
 type Cards interface {
 	CreateCard(ctx context.Context, tx pgx.Tx, card *domain.Card) (int, error)
+	GetAllCards(ctx context.Context, tx pgx.Tx) ([]*domain.Card, error)
+	DeleteCard(ctx context.Context, tx pgx.Tx, cardId int) error
 }
 
 type postgres struct {

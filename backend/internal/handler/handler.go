@@ -29,18 +29,20 @@ func (h *Handler) Init() *echo.Echo {
 		auth.POST("/sign-in", h.SignIn)
 	}
 
-	api := router.Group("/api", h.AuthMiddleware)
+	api := router.Group("/api")
 	{
-		api.GET("/balance", h.GetBalance)
+		api.GET("/balance", h.GetBalance, h.AuthMiddleware)
 		transfer := api.Group("/transfer")
 		{
-			transfer.POST("/matic", h.TransferMatic)
-			transfer.POST("/ruble", h.TransferRuble)
+			transfer.POST("/matic", h.TransferMatic, h.AuthMiddleware)
+			transfer.POST("/ruble", h.TransferRuble, h.AuthMiddleware)
 		}
 
-		api.POST("/cards", h.CreateCard)
+		api.GET("/cards", h.GetAllCards)
+		api.POST("/cards", h.CreateCard, h.AuthMiddleware)
+		api.DELETE("/cards/:card_id", h.DeleteCard, h.AuthMiddleware)
 
-		api.GET("/profile", h.GetProfile)
+		api.GET("/profile", h.GetProfile, h.AuthMiddleware)
 	}
 
 	router.GET("/swagger/*", echoSwagger.WrapHandler)

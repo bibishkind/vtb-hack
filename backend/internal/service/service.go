@@ -29,6 +29,8 @@ type Finance interface {
 
 type Cards interface {
 	CreateCard(ctx context.Context, userId int, card *domain.Card) (int, error)
+	GetAllCards(ctx context.Context) ([]*domain.Card, error)
+	DeleteCard(ctx context.Context, userId int, cardId int) error
 }
 
 type Profile interface {

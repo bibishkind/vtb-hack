@@ -47,6 +47,13 @@ definitions:
       msg:
         type: string
     type: object
+  handler.GetAllCardsResponse:
+    properties:
+      cards:
+        items:
+          $ref: '#/definitions/domain.Card'
+        type: array
+    type: object
   handler.GetBalanceResponse:
     properties:
       balanceMatic:
@@ -132,6 +139,28 @@ paths:
       tags:
       - finance
   /api/cards:
+    get:
+      consumes:
+      - application/json
+      description: get all cards
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.GetAllCardsResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+      summary: Get All Cards
+      tags:
+      - cards
     post:
       consumes:
       - application/json
@@ -161,6 +190,39 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: Create Card
+      tags:
+      - cards
+  /api/cards/{card_id}:
+    delete:
+      consumes:
+      - application/json
+      description: delete card
+      parameters:
+      - description: Card Id
+        in: path
+        name: card_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Delete Card
       tags:
       - cards
   /api/profile:

@@ -4,6 +4,7 @@ import (
 	"coffee-layered-architecture/internal/config"
 	service2 "coffee-layered-architecture/internal/service"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	"github.com/swaggo/echo-swagger"
 	"time"
 )
@@ -22,6 +23,8 @@ func NewHandler(cfg *config.Config, service service2.Service) *Handler {
 
 func (h *Handler) Init() *echo.Echo {
 	router := echo.New()
+
+	router.Use(middleware.CORSWithConfig(middleware.DefaultCORSConfig))
 
 	auth := router.Group("/auth")
 	{

@@ -12,7 +12,7 @@ type GetProfileResponse struct {
 	Profile *domain.Profile `json:"profile"`
 }
 
-// @Summary Create Profile
+// @Summary Get Profile
 // @Security ApiKeyAuth
 // @Tags profile
 // @Description get profile

@@ -1,2 +1,2 @@
-# Backend for VTB Hackaton ❄️
+# ❄️ Backend for VTB Hackaton
 
